@@ -205,11 +205,12 @@ int main(int argc, char **argv)
 				printf("Failed to attach to process. Cannot proceed\n");
 				break;
 			}
-			rc = hotpatch_set_execution_pointer(hp, ptr);
+
+			rc = hotpatch_exec_symbol(hp, ptr);
 			if (rc < 0) {
-				printf("Failed to set execution pointer to 0x"LX"\n", ptr);
-				rc = hotpatch_detach(hp);
-				break;
+			  printf("Failed to execute the symbol in 0x"LX"\n", ptr);
+			  rc = hotpatch_detach(hp);
+			  break;
 			}
 			rc = hotpatch_detach(hp);
 		}

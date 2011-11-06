@@ -830,3 +830,8 @@ do { \
 #undef HP_REG_AX
 	return rc;
 }
+
+int hotpatch_exec_symbol(hotpatch_t *hp, uintptr_t ptr)
+{
+  
+}
