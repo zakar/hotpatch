@@ -377,6 +377,12 @@ int ld_find_library(const struct ld_procmaps *maps, const size_t mapnum,
 		}
 		for (idx = 0; idx < mapnum; ++idx) {
 			const struct ld_procmaps *pm = &maps[idx];
+
+			/*
+			  The library must be mapped from the 0 offset
+			 */
+			if (pm->offset) continue;
+
 			if (!pm->pathname)
 				continue;
 			/* first try inode match. the libraries can be symlinks and
