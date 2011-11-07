@@ -111,7 +111,7 @@ int hotpatch_set_execution_pointer(hotpatch_t *, uintptr_t location);
  * execute the symbol pointed by ptr, assume that it didn't need arguments
  * 
  */
-int hotpatch_exec_symbol(hotpatch_t *, uintptr_t ptr);
+int hotpatch_exec_symbol(hotpatch_t *, uintptr_t ptr, int verbose);
 
 #ifdef __cplusplus
 } /* end of extern C */

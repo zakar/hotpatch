@@ -206,12 +206,13 @@ int main(int argc, char **argv)
 				break;
 			}
 
-			rc = hotpatch_exec_symbol(hp, ptr);
+			rc = hotpatch_exec_symbol(hp, ptr, opts.verbose);
 			if (rc < 0) {
 			  printf("Failed to execute the symbol in 0x"LX"\n", ptr);
 			  rc = hotpatch_detach(hp);
 			  break;
 			}
+
 			rc = hotpatch_detach(hp);
 		}
 	} while (0);

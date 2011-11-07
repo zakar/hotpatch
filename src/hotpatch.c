@@ -831,7 +831,44 @@ do { \
 	return rc;
 }
 
-int hotpatch_exec_symbol(hotpatch_t *hp, uintptr_t ptr)
+int hotpatch_exec_symbol(hotpatch_t *hp, uintptr_t ptr, int verbose)
 {
-  
+#define HP_REG_IP_STR "EIP"
+#define HP_REG_IP(A) A.regs.eip
+#define HP_REG_SP(A) A.regs.esp
+#define HP_REG_AX(A) A.regs.eax
+
+  struct user oregs, iregs;
+  uintptr_t stack, nullcode = 0;
+  int rc; 
+
+  rc = hp_get_regs(hp->pid, &oregs);
+  if (rc < 0) return rc;
+  rc = hp_peekdata(hp->pid, HP_REG_SP(oregs), &stack, verbose);
+  if (rc < 0) return rc;
+  rc = hp_pokedata(hp->pid, HP_REG_SP(oregs), nullcode, verbose);
+  if (rc < 0) return rc;
+
+  memset(&iregs, 0, sizeof(iregs));
+  memcpy(&iregs, &oregs, (sizeof iregs));
+  HP_REG_IP(iregs) = ptr;
+  rc = hp_set_regs(hp->pid, &iregs);
+  if (rc < 0) return rc;
+
+  rc = hp_exec(hp->pid);
+  if (rc < 0) return rc;
+  rc = hp_wait(hp->pid);
+  if (rc < 0) return rc;
+
+  rc = hp_pokedata(hp->pid, HP_REG_SP(oregs), stack, verbose);
+  if (rc < 0) return rc;
+  rc = hp_set_regs(hp->pid, &oregs);
+  if (rc < 0) return rc;
+
+#undef HP_REG_IP_STR
+#undef HP_REG_IP
+#undef HP_REG_SP
+#undef HP_REG_AX
+
+  return rc;
 }
